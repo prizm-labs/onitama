@@ -3,10 +3,21 @@ using System.Collections;
 
 public class TileSelection : MonoBehaviour {
 
+
+
+
 	public GameObject selectedPawn;
+	public GameObject threatenedPawn;
 	public GameObject tileSelectionTarget;
 	public GameObject pawnSelectionTarget;
-	private bool IsPawnSelected = false; [SerializeField]
+	public GameObject capturedPawnLocation;
+
+	[SerializeField] public bool IsPawnSelected = false; 
+	[SerializeField] public bool IsPawnThreatened = false; 
+
+
+	int pawnsLayerMask = 1 << 9;
+	int tileGridLayerMask = 1 << 8;
 
 	// Use this for initialization
 	void Start () {
@@ -17,7 +28,7 @@ public class TileSelection : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if ( Input.GetMouseButtonDown (0)){ 
+		if ( Input.GetMouseButtonUp (0)){ 
 			
 
 
@@ -27,12 +38,13 @@ public class TileSelection : MonoBehaviour {
 			} else {
 				selectTile ();
 			}
-
-			// if selected pawn
-
-
+				
 		}
 
+
+	}
+
+	public void setPawnsAtStartingPositions () {
 
 	}
 
@@ -52,9 +64,9 @@ public class TileSelection : MonoBehaviour {
 	public void selectPawn () {
 		RaycastHit hit; 
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
-		var tileGridLayerMask = 1 << 9;
 
-		if (Physics.Raycast (ray, out hit, 100.0f, tileGridLayerMask)) {
+
+		if (Physics.Raycast (ray, out hit, 100.0f, pawnsLayerMask)) {
 			GameObject parent = hit.transform.parent.gameObject;
 			Vector3 worldPosition = parent.transform.position;
 
@@ -72,42 +84,57 @@ public class TileSelection : MonoBehaviour {
 
 		RaycastHit hit; 
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
-		var tileGridLayerMask = 1 << 8;
 
+
+		// find pawn at tile
+		if (Physics.Raycast (ray, out hit, 100.0f, pawnsLayerMask)) {
+			GameObject parent = hit.transform.parent.gameObject;
+
+			Debug.Log("You threatened the " + parent.name); // ensure you picked right object
+
+			if (parent != selectedPawn) {
+
+				threatenedPawn = parent;
+				IsPawnThreatened = true;
+			}
+
+		}
+
+		// get tile clicked
 		if ( Physics.Raycast (ray,out hit,100.0f,tileGridLayerMask)) {
 
-
-
-
 			StartCoroutine(ScaleMe(hit.transform));
-			Debug.Log("You selected the " + hit.transform.name); // ensure you picked right object
+			//Debug.Log("You selected the " + hit.transform.name); // ensure you picked right object
 
 			GameObject parent = hit.transform.parent.gameObject;
 
 			if (parent) {
-				Debug.Log("You selected the " + parent.name); // ensure you picked right object
 
+				Vector3 worldPosition = parent.transform.position;
 
-				if (parent.layer == 8) { // in TileGird layer
-					Vector3 worldPosition = parent.transform.position;
+				tileSelectionTarget.transform.position = new Vector3(worldPosition.x,worldPosition.y,tileSelectionTarget.transform.position.z);
+				showTileSelectionIndicator ();
 
+				// automatically confirm tile selection
+				confirmTileSelection();
 
-					tileSelectionTarget.transform.position = new Vector3(worldPosition.x,worldPosition.y,tileSelectionTarget.transform.position.z);
-					showTileSelectionIndicator ();
-
-					// automatically confirm tile selection
-					confirmTileSelection();
-				}
 			}
 		}
-
-
+			
 	}
 
 
 	public void confirmTileSelection() {
 
 		hideSelectionTargets ();
+
+		// if pawn threatened, remove it
+		if (IsPawnThreatened) {
+
+			threatenedPawn.transform.position = capturedPawnLocation.transform.position;
+			threatenedPawn = null;
+			IsPawnThreatened = false;
+		}
 
 		selectedPawn.transform.position = new Vector3 (tileSelectionTarget.transform.position.x, tileSelectionTarget.transform.position.y, selectedPawn.transform.position.z);
 
