@@ -42,9 +42,12 @@ public class PlayerControls : MonoBehaviour {
 
 		MovementCard2.transform.position = new Vector3(MovementCardPosition2.transform.position.x,MovementCardPosition2.transform.position.y,MovementCard2.transform.position.z);
 
+		MovementCard1.transform.eulerAngles = new Vector3 (MovementCard1.transform.eulerAngles.x, MovementCard1.transform.eulerAngles.y, transform.eulerAngles.z);
+		MovementCard2.transform.eulerAngles = new Vector3 (MovementCard2.transform.eulerAngles.x, MovementCard2.transform.eulerAngles.y, transform.eulerAngles.z);
 
 		if (MovementCardNext != null) {
 			MovementCardNext.transform.position = new Vector3(MovementCardPositionNext.transform.position.x,MovementCardPositionNext.transform.position.y,MovementCardNext.transform.position.z);
+			MovementCardNext.transform.eulerAngles = new Vector3 (MovementCardNext.transform.eulerAngles.x, MovementCardNext.transform.eulerAngles.y, transform.eulerAngles.z);
 		}
 
 	}

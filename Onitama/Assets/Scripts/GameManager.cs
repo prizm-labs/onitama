@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 
 		selectRandomCards ();
-
+		chooseFirstPlayer ();
 		setActivePlayer ();
 	}
 	
@@ -57,6 +57,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void selectRandomCards() {
+
+	}
+
+	public void chooseFirstPlayer() {
 
 	}
 
@@ -128,17 +132,18 @@ public class GameManager : MonoBehaviour {
 		passivePlayer.GetComponent<PlayerControls> ().receiveCard ();
 
 		// move selected card to passive player's next card
-		Vector3 p = passivePlayer.GetComponent<PlayerControls> ().MovementCardPositionNext.transform.position;
-
-		selectedCard.transform.position = new Vector3(p.x,p.y,selectedCard.transform.position.z);
+//		Vector3 p = passivePlayer.GetComponent<PlayerControls> ().MovementCardPositionNext.transform.position;
+//
+//		selectedCard.transform.position = new Vector3(p.x,p.y,selectedCard.transform.position.z);
 		passivePlayer.GetComponent<PlayerControls> ().MovementCardNext = selectedCard;
+		passivePlayer.GetComponent<PlayerControls> ().setCards ();
 
 
 		// move next card to active players' current cards
 		activePlayer.GetComponent<PlayerControls> ().shiftCards ();
 
-		Vector3 p2 = activePlayer.GetComponent<PlayerControls> ().MovementCardNext.transform.position;
-		activePlayer.GetComponent<PlayerControls> ().MovementCardNext.transform.position = new Vector3 (selectedCardSlot.transform.position.x,selectedCardSlot.transform.position.y,p2.z);
+//		Vector3 p2 = activePlayer.GetComponent<PlayerControls> ().MovementCardNext.transform.position;
+//		activePlayer.GetComponent<PlayerControls> ().MovementCardNext.transform.position = new Vector3 (selectedCardSlot.transform.position.x,selectedCardSlot.transform.position.y,p2.z);
 
 		if (selectedCardSlot.transform.CompareTag("CardSlot1") ){
 			activePlayer.GetComponent<PlayerControls> ().MovementCard1 = activePlayer.GetComponent<PlayerControls> ().MovementCardNext;
@@ -147,6 +152,10 @@ public class GameManager : MonoBehaviour {
 		}
 
 		activePlayer.GetComponent<PlayerControls> ().MovementCardNext = null;
+
+		activePlayer.GetComponent<PlayerControls> ().setCards ();
+
+
 
 
 		selectedCard = null;
