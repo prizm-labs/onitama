@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		selectRandomCards ();
+
 		setActivePlayer ();
 	}
 	
@@ -54,6 +56,14 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+	public void selectRandomCards() {
+
+	}
+
+	public void resetGame() {
+
+	}
+
 
 	public void setActivePlayer() {
 
@@ -62,6 +72,7 @@ public class GameManager : MonoBehaviour {
 
 		// hide selectedCardIndicator
 		selectedCardIndicator.transform.GetChild(0).GetComponent<Renderer> ().enabled = false;
+		selectedCardIndicator.transform.GetChild(1).GetComponent<Renderer> ().enabled = false;
 	}
 
 	public void selectCardSlot() {
@@ -83,6 +94,7 @@ public class GameManager : MonoBehaviour {
 
 				// show selectedCardIndicator
 				selectedCardIndicator.transform.GetChild(0).GetComponent<Renderer> ().enabled = true;
+				selectedCardIndicator.transform.GetChild(1).GetComponent<Renderer> ().enabled = true;
 
 				selectCard ();
 			}
