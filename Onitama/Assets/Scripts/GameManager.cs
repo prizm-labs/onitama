@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+//using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 
@@ -11,6 +13,7 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject selectedCard;
 	public GameObject selectedCardSlot;
+
 	public GameObject nextCard;
 
 	public GameObject selectedCardIndicator;
@@ -22,9 +25,30 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		selectRandomCards ();
+		SetupGame ();
+	}
+
+	void SetupGame() {
+		setGamePieces ();
+
 		chooseFirstPlayer ();
+		selectRandomCards ();
 		setActivePlayer ();
+
+		activePlayer.GetComponent<PlayerControls>().setCards ();
+		passivePlayer.GetComponent<PlayerControls>().setCards ();
+	}
+
+	void returnCardsToDeck() {
+
+
+		SpriteRenderer[] cardsInDeck = GameObject.Find("MovementCardsDeck").GetComponentsInChildren<SpriteRenderer>();
+		Debug.Log ("cards in deck: "+cardsInDeck.Length);
+
+		foreach (SpriteRenderer card in cardsInDeck) {
+			card.gameObject.transform.parent.gameObject.transform.position = new Vector3 (100, 100, card.gameObject.transform.parent.gameObject.transform.position.z);
+		}
+
 	}
 	
 	// Update is called once per frame
@@ -56,16 +80,58 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+
+
 	public void selectRandomCards() {
 
+
+		var selectionCount = 5;
+
+
+		var source = new List<int>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+		var selection = new List<int> ();
+
+		while (selection.Count < selectionCount) {
+			var MyIndex = Random.Range(0,source.Count);
+			selection.Add(source[MyIndex]);
+
+			Debug.Log (source[MyIndex]);
+
+			source.Remove (source [MyIndex]);
+		}
+
+		// pick 5 random cards
+		SpriteRenderer[] cardsInDeck = GameObject.Find("MovementCardsDeck").GetComponentsInChildren<SpriteRenderer>();
+		Debug.Log ("cards in deck: "+cardsInDeck.Length);
+		// assign first 2 to playerA 
+		activePlayer.GetComponent<PlayerControls>().MovementCard1 = cardsInDeck[selection[0]].gameObject.transform.parent.gameObject;
+		activePlayer.GetComponent<PlayerControls>().MovementCard2 = cardsInDeck[selection[1]].gameObject.transform.parent.gameObject;
+
+		// assign next 2 to playerB
+		passivePlayer.GetComponent<PlayerControls>().MovementCard1 = cardsInDeck[selection[2]].gameObject.transform.parent.gameObject;
+		passivePlayer.GetComponent<PlayerControls>().MovementCard2 = cardsInDeck[selection[3]].gameObject.transform.parent.gameObject;
+
+		// assign last to next card
+		activePlayer.GetComponent<PlayerControls>().MovementCardNext = cardsInDeck[selection[4]].gameObject.transform.parent.gameObject;
 	}
 
 	public void chooseFirstPlayer() {
 
+		// coin toss?
+
+	}
+
+	public void setGamePieces() {
+		activePlayer.GetComponent<PlayerControls> ().setPawns ();
+		passivePlayer.GetComponent<PlayerControls> ().setPawns ();
 	}
 
 	public void resetGame() {
+		Debug.Log ("reset game");
 
+		returnCardsToDeck ();
+
+		SetupGame ();
 	}
 
 
